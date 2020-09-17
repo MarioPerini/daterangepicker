@@ -785,11 +785,12 @@
             html += '</thead>';
             html += '<tbody>';
 
+
             //adjust minDate to reflect the minSpan setting in order to
             //grey out end dates beyond the minSpan
             if (this.endDate == null && this.minSpan) {
                 var minLimit = this.startDate.clone().add(this.minSpan).endOf('day');
-                if (!minDate || minLimit.isBefore(minDate)) {
+                if (!minDate || minLimit.isAfter(minDate)) {
                     minDate = minLimit;
                 }
             }
@@ -832,13 +833,13 @@
                     if (this.minDate && calendar[row][col].isBefore(this.minDate, 'day'))
                         classes.push('off', 'disabled');
 
-                    //don't allow selection of dates before the minDate date
-                    if (minDate && calendar[row][col].isBefore(minDate.clone().subtract(1, 'day'), 'day'))
-                        classes.push('off', 'disabled');
-
                     //don't allow selection of dates after the maximum date
                     if (maxDate && calendar[row][col].isAfter(maxDate, 'day'))
                         classes.push('off', 'disabled');
+
+                    //don't allow selection of dates before the minDate date
+                    if (minDate && calendar[row][col].isBefore(minDate.clone().subtract(1, 'day'), 'day'))
+                        classes.push('disabled');
 
                     //don't allow selection of date if a custom function decides it's invalid
                     if (this.isInvalidDate(calendar[row][col]))
