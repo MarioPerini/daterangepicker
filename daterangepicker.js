@@ -345,8 +345,8 @@
 
                 // If end date does not equal or exceed start date + minSpan,
                 // use the start date + minSpan as end date.
-                if (this.minSpan && end.clone().isBefore(start.clone().add(this.minSpan).subtract(1, 'day').endOf('day')))
-                    end = start.clone().add(this.minSpan).subtract(1, 'day').endOf('day');
+                if (this.minSpan && end.clone().isBefore(start.clone().add(this.minSpan).endOf('day')))
+                    end = start.clone().add(this.minSpan).endOf('day');
 
                 if (maxDate && end.isAfter(maxDate))
                     end = maxDate.clone();
