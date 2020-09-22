@@ -1,10 +1,11 @@
 /**
-* @version: 3.1
+* @version: 3.1.1
 * @author: Dan Grossman http://www.dangrossman.info/
 * @copyright: Copyright (c) 2012-2019 Dan Grossman. All rights reserved.
 * @license: Licensed under the MIT license. See http://www.opensource.org/licenses/mit-license.php
 * @website: http://www.daterangepicker.com/
 */
+
 // Following the UMD template https://github.com/umdjs/umd/blob/master/templates/returnExportsGlobal.js
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -218,6 +219,11 @@
             this.minSpan = options.dateLimit.min;
         }
 
+        // sanity check for bad options
+        if (this.minSpan && this.endDate.isBefore(this.startDate.clone().add(this.minSpan).subtract({days:1}))) {
+            this.endDate = this.startDate.clone().add(this.minSpan).subtract({days:1}).endOf('day');
+        }
+
         if (typeof options.opens === 'string')
             this.opens = options.opens;
 
@@ -285,7 +291,7 @@
             this.alwaysShowCalendars = options.alwaysShowCalendars;
 
         // update day names order to firstDay
-        if (this.locale.firstDay != 0) {
+        if (this.locale.firstDay !== 0) {
             var iterator = this.locale.firstDay;
             while (iterator > 0) {
                 this.locale.daysOfWeek.push(this.locale.daysOfWeek.shift());
@@ -303,7 +309,7 @@
 
                 start = end = null;
 
-                if (split.length == 2) {
+                if (split.length === 2) {
                     start = moment(split[0], this.locale.format);
                     end = moment(split[1], this.locale.format);
                 } else if (this.singleDatePicker && val !== "") {
@@ -345,8 +351,8 @@
 
                 // If end date does not equal or exceed start date + minSpan,
                 // use the start date + minSpan as end date.
-                if (this.minSpan && end.clone().isBefore(start.clone().add(this.minSpan).subtract(1, 'day').endOf('day')))
-                    end = start.clone().add(this.minSpan).subtract(1, 'day').endOf('day');
+                if (this.minSpan && end.clone().isBefore(start.clone().add(this.minSpan).endOf('day')))
+                    end = start.clone().add(this.minSpan).endOf('day');
 
                 if (maxDate && end.isAfter(maxDate))
                     end = maxDate.clone();
@@ -516,11 +522,11 @@
             if (this.maxDate && this.endDate.isAfter(this.maxDate))
                 this.endDate = this.maxDate.clone();
 
-            if (this.minSpan && this.endDate.clone().isBefore(this.startDate.clone().add(this.minSpan))) {
-                this.endDate = this.startDate.clone().add(this.minSpan).subtract(1, 'day').endOf('day');
+            if (this.minSpan && this.endDate.clone().isBefore(this.startDate.clone().add(this.minSpan).subtract({days: 1}).endOf('day'))) {
+                this.endDate = this.startDate.clone().add(this.minSpan).subtract({days: 1}).endOf('day');
                 if(this.endDate.isAfter(this.maxDate)){
                     this.endDate = this.maxDate
-                    this.startDate = this.endDate.clone().subtract(this.minSpan).add(1, 'day')
+                    this.startDate = this.endDate.clone().subtract(this.minSpan).add({days: 1}).startOf('day')
                 }
             }
 
@@ -896,7 +902,7 @@
 
             var html, selected, minDate, maxDate = this.maxDate;
 
-            if (this.minSpan && (!this.endDate || this.startDate.clone().add(this.minSpan).isAfter(this.maxDate))){
+            if (this.minSpan && (!this.endDate || this.startDate.clone().add(this.minSpan).subtract({days:1}).isAfter(this.maxDate))){
                 minDate = this.startDate.clone().add(this.minSpan)
             }
 
